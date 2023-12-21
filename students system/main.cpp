@@ -18,7 +18,9 @@ Github地址：https://github.com/ATTILES/students-system.git
 //库函数引用
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "funtion.h"
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //函数声明
 void showMenu(); 
@@ -38,13 +40,14 @@ void readStuData();//数据文件保存格式均采用csv格式
 void writeStuData();//数据文件保存格式均采用csv格式
 void exitSystem();
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //结构体类型：学生信息
 typedef struct StudentInfomation {
     char id[20];
     char name[20];
     char sex[10];
-    char homeAddress[50];
+    char homeAddress[100];
     char phone[20];
 }StudentInfo;
 
@@ -68,6 +71,8 @@ typedef struct Student {
     StudentInfo stuInfo;
     StudentData stuData;
 }Student;
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //main函数
 int main() {
@@ -122,6 +127,8 @@ int main() {
     return 0;
 }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 //主菜单UI展示
 void showMenu() {
     system("cls");  // Windows系统清屏命令  
@@ -144,8 +151,30 @@ void showMenu() {
     printf("**************************************\n");
 }
 
+//添加学生信息
 void addStuInfo() {
-    printf("This is funtion about addStuInfo\n");
+    system("cls");  // Windows系统清屏命令  
+    StudentInfo tempStuInfo = {"","","","",""};
+    while (1) {
+        printf("请输入学号\n");
+        fgets(tempStuInfo.id,sizeof(tempStuInfo.id), stdin);
+        printf("请输入姓名\n");
+        fgets(tempStuInfo.name, sizeof(tempStuInfo.name), stdin);
+        printf("请输入性别\n");
+        fgets(tempStuInfo.sex, sizeof(tempStuInfo.sex), stdin);
+        printf("请输入家庭地址\n");
+        fgets(tempStuInfo.homeAddress, sizeof(tempStuInfo.homeAddress), stdin);
+        printf("请输入联系电话\n");
+        fgets(tempStuInfo.phone, sizeof(tempStuInfo.phone), stdin);
+        printf("请核对输入数据，确认是否添加。Y/N\n");
+        if (FunAskConfirm()) {
+            ;//这里写writeStuInfo()函数，但该函数还没写，参数没定
+        }
+        printf("是否继续输入学生信息。Y/N\n");
+        if (FunAskConfirm() == 0) {
+            return;
+        }
+    }
 }
 
 void deleteStuInfo() {
@@ -184,13 +213,14 @@ void showStuData() {
     printf("This is funtion about showStuData()\n");
 }
 
-
 void readStuInfo() {
     printf("This is funtion about readStuInfo()\n");
+    //检索文件内容，以id为主码，在对应的id之间读取一行记录。
 }
 
 void writeStuInfo() {
     printf("This is funtion about writeStuInfo()\n");
+    //检索文件内容，以id为主码，在对应的id之间写入一行记录。
 }
 
 void readStuData() {
@@ -203,11 +233,9 @@ void writeStuData() {
 
 //退出系统
 void exitSystem() {
+    system("cls");  // Windows系统清屏命令  
     printf("确认退出系统？Y/N\n");
-    char confirm = ' ';
-    confirm = getchar();
-    rewind(stdin);//清空标准输入缓存区
-    if (confirm == 'Y' || confirm == 'y') {
+    if (FunAskConfirm()) {
         exit(0);
     }
     printf("本系统继续运行中...\n");
