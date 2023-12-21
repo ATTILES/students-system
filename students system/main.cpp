@@ -14,42 +14,31 @@ Github地址：https://github.com/ATTILES/students-system.git
 */
 
 #define _CRT_SECURE_NO_WARNINGS //在VS中使用scanf()函数
+#define MAX 100                 //最大数据支撑100个学生
 
 //库函数引用
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "funtion.h"
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//函数声明
-void showMenu(); 
-void addStuInfo();
-void deleteStuInfo();
-void updateStuInfo();
-void queryStuInfo();
-void showStuInfo();
-void addStuData();
-void deleteStuData();
-void updateStuData();
-void queryStuData();
-void showStuData();
-void readStuInfo();//数据文件保存格式均采用csv格式
-void writeStuInfo();//数据文件保存格式均采用csv格式
-void readStuData();//数据文件保存格式均采用csv格式
-void writeStuData();//数据文件保存格式均采用csv格式
-void exitSystem();
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //结构体类型：学生信息
 typedef struct StudentInfomation {
-    char id[20];
+    char  id[20];
     char name[20];
     char sex[10];
     char homeAddress[100];
     char phone[20];
-}StudentInfo;
+    struct StudentInfomation* next;
+}StudentInfo,*Pointer;
+
+
 
 //结构体类型：学生数据
 typedef struct StudentData{
@@ -72,10 +61,29 @@ typedef struct Student {
     StudentData stuData;
 }Student;
 
+//函数声明
+void readStuInfo(StudentInfo stu[]);
+void showMenu();
+void addStuInfo(Pointer* Head);
+void deleteStuInfo();
+void updateStuInfo();
+void queryStuInfo();
+void addStuData();
+void deleteStuData();
+void updateStuData();
+void queryStuData();
+void showStuInfo();
+void showStuData();
+void readStuData();//数据文件保存格式均采用csv格式
+void writeStuData();//数据文件保存格式均采用csv格式
+void exitSystem();
+void writeStuInfo(Pointer head);
+void clearStuInfo(StudentInfo stu[], int size);// 清空结构体缓存
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //main函数
 int main() {
+    Pointer Head = NULL;
     int select=0;
     while (1) {
         showMenu();
@@ -84,7 +92,7 @@ int main() {
         rewind(stdin);//清空标准输入缓存区
         switch (select) {
             case 1:
-                addStuInfo();
+                addStuInfo(&Head);
                 break;
             case 2:
                 deleteStuInfo();
@@ -151,31 +159,112 @@ void showMenu() {
     printf("**************************************\n");
 }
 
-//添加学生信息
-void addStuInfo() {
-    system("cls");  // Windows系统清屏命令  
-    StudentInfo tempStuInfo = {"","","","",""};
-    while (1) {
-        printf("请输入学号\n");
-        fgets(tempStuInfo.id,sizeof(tempStuInfo.id), stdin);
-        printf("请输入姓名\n");
-        fgets(tempStuInfo.name, sizeof(tempStuInfo.name), stdin);
-        printf("请输入性别\n");
-        fgets(tempStuInfo.sex, sizeof(tempStuInfo.sex), stdin);
-        printf("请输入家庭地址\n");
-        fgets(tempStuInfo.homeAddress, sizeof(tempStuInfo.homeAddress), stdin);
-        printf("请输入联系电话\n");
-        fgets(tempStuInfo.phone, sizeof(tempStuInfo.phone), stdin);
-        printf("请核对输入数据，确认是否添加。Y/N\n");
-        if (FunAskConfirm()) {
-            ;//这里写writeStuInfo()函数，但该函数还没写，参数没定
+
+void readStuInfo(StudentInfo stu[])
+{
+    FILE* fp;
+    if ((fp = fopen("StudentInfo.csv", "r")) == NULL)
+    {
+        printf("无法打开文件");
+        fclose(fp);
+        return;
+    }
+    else
+    {
+        char line[100];
+        int i=0;
+        while (fgets(line, sizeof(line), fp) != NULL) // 逐行读取文件内容
+        {
+            if(i==MAX)
+            {
+                break;
+            }
+           sscanf(line, "%[^,],%[^,],%[^,],%[^,],%s", stu[i].id, stu[i].name, stu[i].sex, stu[i].homeAddress, stu[i].phone);
+           i++;
         }
-        printf("是否继续输入学生信息。Y/N\n");
-        if (FunAskConfirm() == 0) {
-            return;
-        }
+
+        fclose(fp);
     }
 }
+
+void addStuInfo(Pointer* head)      //添加学生信息
+{
+    int num;
+    printf("请输入要添加的学生数量：");
+    scanf("%d", &num);
+
+    for (int i = 0; i < num; i++) {
+        Pointer p, q, r;
+        char in_number[20];
+
+        printf("请输入学号：");
+        scanf("%s", in_number);
+
+        p = q = *head;
+        while (p != NULL) {
+            if (strcmp(p->id, in_number) == 0) {
+                printf("已经有相同的学号：");
+                return;
+            }
+            else {
+                q = p;
+                p = p->next;  //走链判断是否存在这个学号信息
+            }
+        }
+
+        r = (Pointer)malloc(sizeof(StudentInfo));
+
+        if (r == NULL) {
+            printf("分配空间失败!");
+            return;
+        }
+
+        r->next = NULL;
+
+        if (q == NULL)
+            *head = r;
+        else {
+            q->next = r;
+        }
+
+        strcpy(r->id, in_number);
+        printf("请输入姓名：");
+        scanf("%s", r->name);
+        printf("请输入性别：");
+        scanf("%s", r->sex);
+        printf("请输入家庭地址：");
+        scanf("%s", r->homeAddress);
+        printf("请输入电话：");
+        scanf("%s", r->phone);
+
+        writeStuInfo(r); // 调用写入函数，将当前学生信息写入文件
+    }
+}
+
+
+
+void writeStuInfo(Pointer head)
+{
+    FILE* fp;
+
+    if ((fp = fopen("StudentInfo.csv", "a")) == NULL) // 以追加模式打开文件
+    {
+        printf("无法打开文件");
+        return;
+    }
+
+    Pointer p = head;
+    while (p != NULL)
+    {
+        fprintf(fp, "%s,%s,%s,%s,%s\n", p->id, p->name, p->sex, p->homeAddress, p->phone); // 将学生信息以指定格式写入文件
+        p = p->next;
+    }
+
+    fclose(fp);
+    printf("学生信息已成功写入文件。\n");
+}
+
+
 
 void deleteStuInfo() {
     printf("This is funtion about deleteStuInfo()\n");
@@ -189,9 +278,27 @@ void queryStuInfo() {
     printf("This is funtion about queryStuInfo()\n");
 }
 
-void showStuInfo() {
-    printf("This is funtion about showStuInfo()\n");
+void showStuInfo() //展示学生信息
+{
+    FILE* fp;
+    if ((fp = fopen("StudentInfo.csv", "r")) == NULL) {
+        printf("无法打开文件");
+        return;
+    }
+
+    char line[100];
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        printf("%s", line);
+    }
+
+    fclose(fp);
 }
+
+void clearStuInfo(StudentInfo stu[], int size) // 清空结构体缓存
+{
+    memset(stu, 0, sizeof(StudentInfo) * size);
+}
+
 
 void addStuData() {
     printf("This is funtion about addStuData\n");
@@ -209,13 +316,9 @@ void queryStuData() {
     printf("This is funtion about queryStuData()\n");
 }
 
-void showStuData() {
+void showStuData() 
+{
     printf("This is funtion about showStuData()\n");
-}
-
-void readStuInfo() {
-    printf("This is funtion about readStuInfo()\n");
-    //检索文件内容，以id为主码，在对应的id之间读取一行记录。
 }
 
 void writeStuInfo() {
@@ -230,6 +333,7 @@ void readStuData() {
 void writeStuData() {
     printf("This is funtion about writeStuData()\n");
 }
+
 
 //退出系统
 void exitSystem() {
