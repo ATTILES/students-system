@@ -172,7 +172,7 @@ void addStuInfo() {
         }
         printf("是否继续输入学生信息。Y/N\n");
         if (FunAskConfirm() == 0) {
-            return;//
+            return;
         }
     }
 }
