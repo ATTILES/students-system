@@ -6,7 +6,6 @@ funtion.c
 //库函数引用
 #include <stdio.h>
 #include <stdlib.h>
-#include "funtion.h"
 
 //请求用户确认,输入Y和y确认
 int FunAskConfirm() {

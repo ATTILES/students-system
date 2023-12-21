@@ -7,3 +7,5 @@ funtion.h
 #define FUN_ASK_CONFIRM_H   
 int FunAskConfirm();
 #endif //FUN_ASK_CONFIRM_H
+
+#include "funtion.c"
