@@ -64,8 +64,8 @@ typedef struct Student {
 //函数声明
 void readStuInfo(StudentInfo stu[]);
 void showMenu();
-void addStuInfo(Pointer* Head);
-void deleteStuInfo();
+void addStuInfo(Pointer* head);
+void deleteStuInfo(Pointer* head);
 void updateStuInfo();
 void queryStuInfo();
 void addStuData();
@@ -79,6 +79,9 @@ void writeStuData();//数据文件保存格式均采用csv格式
 void exitSystem();
 void writeStuInfo(Pointer head);
 void clearStuInfo(StudentInfo stu[], int size);// 清空结构体缓存
+void clearStuInfoFile();//清空文件函数
+void loadStuInfoFromFile(Pointer* head);//将学生信息加载到链表
+void addStuInfotopointer(Pointer* head, const char* id, const char* name, const char* sex, const char* homeAddress, const char* phone);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //main函数
@@ -95,7 +98,7 @@ int main() {
                 addStuInfo(&Head);
                 break;
             case 2:
-                deleteStuInfo();
+                deleteStuInfo(&Head);
                 break;
             case 3:
                 updateStuInfo();
@@ -159,7 +162,6 @@ void showMenu() {
     printf("**************************************\n");
 }
 
-
 void readStuInfo(StudentInfo stu[])
 {
     FILE* fp;
@@ -192,6 +194,7 @@ void addStuInfo(Pointer* head)      //添加学生信息
     int num;
     printf("请输入要添加的学生数量：");
     scanf("%d", &num);
+    getchar();  // 清空输入缓冲区中的换行符
 
     for (int i = 0; i < num; i++) {
         Pointer p, q, r;
@@ -199,12 +202,13 @@ void addStuInfo(Pointer* head)      //添加学生信息
 
         printf("请输入学号：");
         scanf("%s", in_number);
+        getchar();  // 清空输入缓冲区中的换行符
 
         p = q = *head;
         while (p != NULL) {
             if (strcmp(p->id, in_number) == 0) {
                 printf("已经有相同的学号：");
-                return;
+                continue;  // 跳过当前循环，继续下一次循环
             }
             else {
                 q = p;
@@ -230,27 +234,32 @@ void addStuInfo(Pointer* head)      //添加学生信息
         strcpy(r->id, in_number);
         printf("请输入姓名：");
         scanf("%s", r->name);
+        getchar();  // 清空输入缓冲区中的换行符
         printf("请输入性别：");
         scanf("%s", r->sex);
+        getchar();  // 清空输入缓冲区中的换行符
         printf("请输入家庭地址：");
         scanf("%s", r->homeAddress);
+        getchar();  // 清空输入缓冲区中的换行符
         printf("请输入电话：");
         scanf("%s", r->phone);
-
+        getchar();  // 清空输入缓冲区中的换行符
         writeStuInfo(r); // 调用写入函数，将当前学生信息写入文件
     }
 }
 
 
-
+//写入文件函数
 void writeStuInfo(Pointer head)
 {
     FILE* fp;
 
-    if ((fp = fopen("StudentInfo.csv", "a")) == NULL) // 以追加模式打开文件
-    {
-        printf("无法打开文件");
-        return;
+    if ((fp = fopen("StudentInfo.csv", "a")) == NULL) {
+        if ((fp = fopen("StudentInfo.csv", "w+")) == NULL) {
+            printf("学生信息文件StudentInfo.csv创建失败\n");
+            return;
+        }
+        printf("已创建学生信息文件StudentInfo.csv\n");
     }
 
     Pointer p = head;
@@ -265,9 +274,100 @@ void writeStuInfo(Pointer head)
 }
 
 
+//删除学生信息函数
+void deleteStuInfo(Pointer* head)
+{
+    printf("目前存在的学生信息\n");
+    showStuInfo();
+    loadStuInfoFromFile(head);
+    Pointer p, q;
+    p = q = *head;
+    char id[20];
+    printf("请输入要删除的学生学号：");
+    scanf("%s", id);
+    while (p != NULL) {
+        if (strcmp(p->id, id) == 0)
+        {
+            if (p == *head) {
+                *head = p->next;
+            }
+            else {
+                q->next = p->next;
+            }
+            free(p);
+            printf("学生信息已成功删除。\n");
+            clearStuInfoFile();
+            writeStuInfo(*head); // 将更新后的链表信息写入文件
+            return;
+        }
+        else {
+            q = p;
+            p = p->next;
+        }
+    }
 
-void deleteStuInfo() {
-    printf("This is funtion about deleteStuInfo()\n");
+    printf("未找到指定学号的学生信息。\n");
+}
+
+//清空文件函数
+void clearStuInfoFile()
+{
+    FILE* fp;
+    if ((fp = fopen("StudentInfo.csv", "w")) == NULL) {
+        printf("无法打开文件\n");
+        return;
+    }
+    fclose(fp);
+}
+
+// 向链表头指针指向的链表中添加学生信息
+void addStuInfotopointer(Pointer* head, const char* id, const char* name, const char* sex, const char* homeAddress, const char* phone) {
+    // 创建一个新节点
+    Pointer newNode = (Pointer)malloc(sizeof(StudentInfo));
+
+    // 将传入的学生信息复制到新节点的对应字段中
+    strcpy(newNode->id, id);
+    strcpy(newNode->name, name);
+    strcpy(newNode->sex, sex);
+    strcpy(newNode->homeAddress, homeAddress);
+    strcpy(newNode->phone, phone);
+
+    // 将新节点的next指针置为NULL
+    newNode->next = NULL;
+
+    // 如果链表为空，则将新节点设置为头节点
+    if (*head == NULL) {
+        *head = newNode;
+    }
+    else {
+        // 否则，找到链表的末尾节点，并将新节点插入到末尾
+        Pointer p = *head;
+        while (p->next != NULL) {
+            p = p->next;
+        }
+        p->next = newNode;
+    }
+}
+
+
+void loadStuInfoFromFile(Pointer* head)   //将学生信息加载到链表
+{
+    FILE* fp;
+    if ((fp = fopen("StudentInfo.csv", "r")) == NULL)
+    {
+        printf("无法打开文件");
+        return;
+    }
+
+    char line[200];
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        char id[20], name[20], sex[10], homeAddress[100], phone[20];
+        sscanf(line, "%[^,],%[^,],%[^,],%[^,],%s", id, name, sex, homeAddress, phone);
+
+        addStuInfotopointer(head, id, name, sex, homeAddress, phone);
+    }
+
+    fclose(fp);
 }
 
 void updateStuInfo() {
@@ -299,12 +399,10 @@ void showStuInfo()
     fclose(fp);
 }
 
-
 void clearStuInfo(StudentInfo stu[], int size) // 清空结构体缓存
 {
     memset(stu, 0, sizeof(StudentInfo) * size);
 }
-
 
 void addStuData() {
     printf("This is funtion about addStuData\n");
