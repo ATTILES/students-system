@@ -247,10 +247,12 @@ void writeStuInfo(Pointer head)
 {
     FILE* fp;
 
-    if ((fp = fopen("StudentInfo.csv", "a")) == NULL) // 以追加模式打开文件
-    {
-        printf("无法打开文件");
-        return;
+    if ((fp = fopen("StudentInfo.csv", "a+")) == NULL) {
+        if ((fp = fopen("StudentInfo.csv", "w+")) == NULL) {
+            printf("学生信息文件StudentInfo.csv创建失败\n");
+            return;
+        }
+        printf("已创建学生信息文件StudentInfo.csv\n");
     }
 
     Pointer p = head;
