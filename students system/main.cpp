@@ -278,7 +278,7 @@ void queryStuInfo() {
     printf("This is funtion about queryStuInfo()\n");
 }
 
-void showStuInfo() //展示学生信息
+void showStuInfo() 
 {
     FILE* fp;
     if ((fp = fopen("StudentInfo.csv", "r")) == NULL) {
@@ -288,11 +288,17 @@ void showStuInfo() //展示学生信息
 
     char line[100];
     while (fgets(line, sizeof(line), fp) != NULL) {
-        printf("%s", line);
+        char* token = strtok(line, ",");
+        while (token != NULL) {
+            printf("%-20s", token);  // 使用%-20s来左对齐输出
+            token = strtok(NULL, ",");
+        }
+        printf("\n");
     }
 
     fclose(fp);
 }
+
 
 void clearStuInfo(StudentInfo stu[], int size) // 清空结构体缓存
 {
