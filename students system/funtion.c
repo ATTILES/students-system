@@ -11,7 +11,7 @@
 //库引用
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.>
+#include<string.h>
 #include "funtion.h"
 
 //请求用户确认,输入Y和y确认
@@ -55,7 +55,7 @@ typedef struct StudentInfomation {
 }StudentInfo;
 #endif // !__STRUCT_STUDENTINFOMATION__
 
-//创建空节点 √
+//创建空节点
 //参数：无
 //返回值：指向节点的指针
 StudentInfo* createStuInfoNode() {
@@ -71,7 +71,7 @@ StudentInfo* createStuInfoNode() {
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//在链表末尾增加节点 √
+//在链表末尾增加节点
 //参数：指向链表的指针，新节点的指针
 //返回值：成功返回1，失败返回0 
 int appendStuInfoNode(StudentInfo** head, StudentInfo* newStuInfoNode) {
@@ -90,7 +90,7 @@ int appendStuInfoNode(StudentInfo** head, StudentInfo* newStuInfoNode) {
     return 1; // 增加成功  
 }
 
-//在链表中删除指定节点 √
+//在链表中删除指定节点
 //参数：指向链表的指针，指定节点的索引
 //返回值：成功返回1，失败返回0 
 int deleteStuInfoNode(StudentInfo** head, int index) {
@@ -122,7 +122,7 @@ int deleteStuInfoNode(StudentInfo** head, int index) {
     return 1; // 删除成功  
 }
 
-//在链表中替代指定节点 √
+//在链表中替代指定节点
 //参数：指向链表的指针，指定节点的索引，替代原节点的新节点
 //返回值：成功返回1，失败返回0 
 int updateStuInfoNode(StudentInfo** head, int index, StudentInfo* newStuInfoNode) {
@@ -156,7 +156,7 @@ int updateStuInfoNode(StudentInfo** head, int index, StudentInfo* newStuInfoNode
     return 1; // 替代成功  
 }
 
-//在链表中查询索引的节点 √
+//在链表中查询索引的节点
 //参数：指向链表的指针，索引
 //返回值：指向节点的指针
 StudentInfo* getStuInfoNodeAtIndex(StudentInfo** head, int index) {
@@ -182,7 +182,7 @@ StudentInfo* getStuInfoNodeAtIndex(StudentInfo** head, int index) {
     }
 }
 
-//在链表中查询匹配项(字符串)节点的索引 √
+//在链表中查询匹配项(字符串)节点的索引
 //参数：指向链表的指针，匹配项(字符串)
 //返回值：指定节点的索引 
 int findStuInfoNodeIndex(StudentInfo** head, char* id) {
@@ -205,7 +205,7 @@ int findStuInfoNodeIndex(StudentInfo** head, char* id) {
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//创建指定长度的链表([双向][环型])  √
+//创建指定长度的链表([双向][环型])
 //参数：指向链表的指针，链表长度 
 //返回值：链表的头指针 
 StudentInfo* createStuInfoLinkedList(int len) {
@@ -215,9 +215,11 @@ StudentInfo* createStuInfoLinkedList(int len) {
     int i = 0;
     while (i < len) {
         newStuInfoNode = createStuInfoNode();
+        /*
         printf("请输入id:\n");//依次输入节点的数据 
         fgets(tempString, sizeof(newStuInfoNode->id), stdin);
         strcpy(newStuInfoNode->id, strtok(tempString, "\n"));
+        */
         if (appendStuInfoNode(&head, newStuInfoNode)) {
             printf("插入节点成功\n");
         }
@@ -229,7 +231,7 @@ StudentInfo* createStuInfoLinkedList(int len) {
     return head;
 }
 
-//遍历打印链表 √ 
+//遍历打印链表
 //参数：指向链表的指针
 //返回值：无
 void printStuInfoLinkedList(StudentInfo** head) {
@@ -256,57 +258,3 @@ void sortStuInfoLinkedList(StudentInfo** head) {
 
 
 }
-
-//函数功能测试
-/*
-int main() {
-    StudentInfo* head = NULL;
-    StudentInfo* newStuInfoNode = NULL;
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));
-    int index = 0;
-    printf("------------------------------------------------------------\n");
-    printf("创建一个新的链表,长度为：\n");
-    scanf("%d", &index);
-    rewind(stdin);
-    head = createStuInfoLinkedList(index);
-    printf("链表遍历：\n");
-    printStuInfoLinkedList(&head);
-    printf("------------------------------------------------------------\n");
-    printf("要删除节点的索引值\n");
-    scanf("%d", &index);
-    rewind(stdin);
-    deleteStuInfoNode(&head, index);
-    printf("链表遍历：\n");
-    printStuInfoLinkedList(&head);
-    //printf("------------------------------------------------------------\n");
-    printf("要修改节点的索引值\n");
-    scanf("%d", &index);
-    rewind(stdin);
-    newStuInfoNode = createStuInfoNode();
-    printf("请输入新节点的id:\n");
-    fgets(tempString, sizeof(newStuInfoNode->id), stdin);
-    rewind(stdin);
-    strcpy(newStuInfoNode->id, strtok(tempString, "\n"));
-    updateStuInfoNode(&head, index, newStuInfoNode);
-    printf("链表遍历：\n");
-    printStuInfoLinkedList(&head);
-    printf("------------------------------------------------------------\n");
-    printf("要查找节点的索引值\n");
-    scanf("%d", &index);
-    rewind(stdin);
-    newStuInfoNode = getStuInfoNodeAtIndex(&head, index);
-    printf("查询到的节点：\n");
-    printf("节点id为%s\n",newStuInfoNode->id);
-    printf("------------------------------------------------------------\n");
-    printf("查找相应id的节点索引\n");
-    newStuInfoNode = createStuInfoNode();
-    fgets(tempString, sizeof(newStuInfoNode->id), stdin);
-    rewind(stdin);
-    strcpy(newStuInfoNode->id, strtok(tempString, "\n"));
-    index = findStuInfoNodeIndex(&head, tempString);
-    printf("输出结果%d：\n",index);
-    printf("------------------------------------------------------------\n");
-    return 0;
-}
-*/
-
