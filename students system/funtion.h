@@ -3,23 +3,20 @@
 非主要的功能函数声明
 */
 
-//宏定义
-// 
-//库引用
-#ifndef __FUNTION_C__
-#define __FUNTION_C__
-#include "funtion.c"
-#endif // !__FUNTION_C__
-
+//防止多次引用
+#ifndef __FUNTION_H__
+#define __FUNTION_H__
 //函数声明
 int FunAskConfirm();
-Node* createNode();
-int appendNode(Node** head, Node* newNode);
-int deleteNode(Node** head, int index);
-int updateNode(Node** head, int index, Node* newNode);
-Node* getNodeAtIndex(Node** head, int index);
-int findNodeIndex(Node** head, char* id);
-Node* createLinkedList(int len);
-void printLinkedList(Node** head);
-void sortLinkedList(Node** head);
+StudentInfo* createStuInfoNode();
+int appendStuInfoNode(StudentInfo** head, StudentInfo* newStudentInfo);
+int deleteStuInfoNode(StudentInfo** head, int index);
+int updateStuInfoNode(StudentInfo** head, int index, StudentInfo* newStudentInfo);
+StudentInfo* getStuInfoNodeAtIndex(StudentInfo** head, int index);
+int findStuInfoNodeIndex(StudentInfo** head, char* id);
+StudentInfo* createStuInfoLinkedList(int len);
+void printStuInfoLinkedList(StudentInfo** head);
+void sortStuInfoLinkedList(StudentInfo** head);
+#endif // !__FUNTION_H__
+
 
