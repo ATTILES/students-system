@@ -1,11 +1,25 @@
+//funtion.h文件
 /*
-funtion.h
-一些复用率高的函数
+非主要的功能函数声明
 */
 
-#ifndef FUN_ASK_CONFIRM_H  
-#define FUN_ASK_CONFIRM_H   
-int FunAskConfirm();
-#endif //FUN_ASK_CONFIRM_H
-
+//宏定义
+// 
+//库引用
+#ifndef __FUNTION_C__
+#define __FUNTION_C__
 #include "funtion.c"
+#endif // !__FUNTION_C__
+
+//函数声明
+int FunAskConfirm();
+Node* createNode();
+int appendNode(Node** head, Node* newNode);
+int deleteNode(Node** head, int index);
+int updateNode(Node** head, int index, Node* newNode);
+Node* getNodeAtIndex(Node** head, int index);
+int findNodeIndex(Node** head, char* id);
+Node* createLinkedList(int len);
+void printLinkedList(Node** head);
+void sortLinkedList(Node** head);
+
