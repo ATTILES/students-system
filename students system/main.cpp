@@ -282,7 +282,6 @@ void deleteStuInfo(Pointer* head)
 {
     printf("目前存在的学生信息\n");
     showStuInfo();             //展示现有的学生信息
-    clearStuInfo(head);//删除链表内容
     loadStuInfoFromFile(head);//将学生信息加载到链表
     printf("目前链表存在的学生信息\n");
     printStuInfo(*head);      //查看链表内容
@@ -329,6 +328,9 @@ void clearStuInfoFile()
 
 // 向链表头指针指向的链表中添加学生信息
 void addStuInfotopointer(Pointer* head, const char* id, const char* name, const char* sex, const char* homeAddress, const char* phone) {
+    
+   
+
     // 创建一个新节点
     Pointer newNode = (Pointer)malloc(sizeof(StudentInfo));
 
@@ -392,11 +394,12 @@ void loadStuInfoFromFile(Pointer* head)   //将学生信息加载到链表
     }
 
     char line[200];
+    clearStuInfo(head); //清空原有链表内容
     while (fgets(line, sizeof(line), fp) != NULL) {
         char id[20], name[20], sex[10], homeAddress[100], phone[20];
         sscanf(line, "%[^,],%[^,],%[^,],%[^,],%s", id, name, sex, homeAddress, phone);
 
-        addStuInfotopointer(head, id, name, sex, homeAddress, phone);
+        addStuInfotopointer(head, id, name, sex, homeAddress, phone);//将学生信息写入链表
     }
 
     fclose(fp);
@@ -410,26 +413,46 @@ void queryStuInfo() {
     printf("This is funtion about queryStuInfo()\n");
 }
 
-void showStuInfo() 
+void showStuInfo()
 {
+  
+    printf("\n                              学生信息如下\n\n");
     FILE* fp;
     if ((fp = fopen("StudentInfo.csv", "r")) == NULL) {
         printf("无法打开文件");
         return;
     }
 
+    printf("%-15s%-15s%-15s%-15s%-15s\n", "学号", "姓名", "性别", "家庭住址", "电话号码");
+    printf("------------------------------------------------------------------------\n");
+
     char line[100];
+    int count = 0;
     while (fgets(line, sizeof(line), fp) != NULL) {
         char* token = strtok(line, ",");
+        int column = 0;
         while (token != NULL) {
-            printf("%-20s", token);  // 使用%-20s来左对齐输出
+            printf("%-15s", token);
             token = strtok(NULL, ",");
+            column++;
         }
-        printf("\n");
+        count++;
+        if (count % 5 == 0) {
+            printf("\n");
+        }
+        else {
+            printf("\n\n");
+        }
     }
 
     fclose(fp);
 }
+
+
+
+
+
+
 
 void clearStuInfo(StudentInfo stu[], int size) // 清空结构体缓存
 {
