@@ -196,61 +196,81 @@ void readStuInfo(StudentInfo stu[])
 //添加学生信息函数
 void addStuInfo(Pointer* head)      //添加学生信息
 {
-    int num;
-    printf("请输入要添加的学生数量：");
-    scanf("%d", &num);
-    getchar();  // 清空输入缓冲区中的换行符
-
-    for (int i = 0; i < num; i++) {
-        Pointer p, q, r;
-        char in_number[20];
-
-        printf("请输入学号：");
-        scanf("%s", in_number);
+    int flag;
+    loadStuInfoFromFile(head);
+    while (1) {
+        int num;
+        printf("请输入要添加的学生数量：");
+        scanf("%d", &num);
         getchar();  // 清空输入缓冲区中的换行符
 
-        p = q = *head;
-        while (p != NULL) {
-            if (strcmp(p->id, in_number) == 0) {
-                printf("已经有相同的学号：");
-                continue;  // 跳过当前循环，继续下一次循环
+        for (int i = 0; i < num; i++) {
+            Pointer p, q, r;
+            char in_number[20];
+
+            printf("请输入学号：");
+            scanf("%s", in_number);
+            getchar();  // 清空输入缓冲区中的换行符
+
+            p = q = *head;
+            while (p != NULL) {
+                flag = 1;
+                if (strcmp(p->id, in_number) == 0) {
+                    printf("已经有相同的学号：\n");
+                    printf("是否重新输入：Y/N\n");
+                    if (FunAskConfirm() == 0) 
+                    {
+                        
+                        return; }
+                    else {
+                        flag = 0;
+                        break;
+                    }
+                    
+                }
+                else {
+                    q = p;
+                    p = p->next;  //走链判断是否存在这个学号信息
+                }
             }
+            if (flag == 0) { continue; }
+
+            r = (Pointer)malloc(sizeof(StudentInfo));
+
+            if (r == NULL) {
+                printf("分配空间失败!");
+                return;
+            }
+
+            r->next = NULL;
+
+            if (q == NULL)
+                *head = r;
             else {
-                q = p;
-                p = p->next;  //走链判断是否存在这个学号信息
+                q->next = r;
             }
+
+            strcpy(r->id, in_number);
+            printf("请输入姓名：");
+            scanf("%s", r->name);
+            getchar();  // 清空输入缓冲区中的换行符
+            printf("请输入性别：");
+            scanf("%s", r->sex);
+            getchar();  // 清空输入缓冲区中的换行符
+            printf("请输入家庭地址：");
+            scanf("%s", r->homeAddress);
+            getchar();  // 清空输入缓冲区中的换行符
+            printf("请输入电话：");
+            scanf("%s", r->phone);
+            getchar();  // 清空输入缓冲区中的换行符
+            writeStuInfo(r); // 调用写入函数，将当前学生信息写入文件
         }
-
-        r = (Pointer)malloc(sizeof(StudentInfo));
-
-        if (r == NULL) {
-            printf("分配空间失败!");
-            return;
+        if (flag == 1) {
+            printf("是否继续添加学生信息：Y/N");
+            if (FunAskConfirm() == 0) { return; }
         }
-
-        r->next = NULL;
-
-        if (q == NULL)
-            *head = r;
-        else {
-            q->next = r;
-        }
-
-        strcpy(r->id, in_number);
-        printf("请输入姓名：");
-        scanf("%s", r->name);
-        getchar();  // 清空输入缓冲区中的换行符
-        printf("请输入性别：");
-        scanf("%s", r->sex);
-        getchar();  // 清空输入缓冲区中的换行符
-        printf("请输入家庭地址：");
-        scanf("%s", r->homeAddress);
-        getchar();  // 清空输入缓冲区中的换行符
-        printf("请输入电话：");
-        scanf("%s", r->phone);
-        getchar();  // 清空输入缓冲区中的换行符
-        writeStuInfo(r); // 调用写入函数，将当前学生信息写入文件
     }
+
 }
 
 //写入文件函数
@@ -260,10 +280,9 @@ void writeStuInfo(Pointer head)
 
     if ((fp = fopen("StudentInfo.csv", "a")) == NULL) {
         if ((fp = fopen("StudentInfo.csv", "w+")) == NULL) {
-            printf("学生信息文件StudentInfo.csv创建失败\n");
-            return;
+            printf("已创建学生信息文件StudentInfo.csv\n");
         }
-        printf("已创建学生信息文件StudentInfo.csv\n");
+        
     }
 
     Pointer p = head;
