@@ -81,6 +81,8 @@ void writeStuInfo(Pointer head);
 void clearStuInfo(StudentInfo stu[], int size);// 清空结构体缓存
 void clearStuInfoFile();//清空文件函数
 void loadStuInfoFromFile(Pointer* head);//将学生信息加载到链表
+void printStuInfo(Pointer head);//查看链表内容
+void clearStuInfo(Pointer* head);//删除链表信息
 void addStuInfotopointer(Pointer* head, const char* id, const char* name, const char* sex, const char* homeAddress, const char* phone);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -90,8 +92,10 @@ int main() {
     int select=0;
     while (1) {
         showMenu();
+        printf("请输入0-10来实现对应的功能:");
         select = -1;
         scanf("%d", &select);
+        getchar();  // 清空输入缓冲区中的换行符
         rewind(stdin);//清空标准输入缓存区
         switch (select) {
             case 1:
@@ -189,6 +193,7 @@ void readStuInfo(StudentInfo stu[])
     }
 }
 
+//添加学生信息函数
 void addStuInfo(Pointer* head)      //添加学生信息
 {
     int num;
@@ -248,7 +253,6 @@ void addStuInfo(Pointer* head)      //添加学生信息
     }
 }
 
-
 //写入文件函数
 void writeStuInfo(Pointer head)
 {
@@ -273,18 +277,21 @@ void writeStuInfo(Pointer head)
     printf("学生信息已成功写入文件。\n");
 }
 
-
 //删除学生信息函数
 void deleteStuInfo(Pointer* head)
 {
     printf("目前存在的学生信息\n");
-    showStuInfo();
-    loadStuInfoFromFile(head);
+    showStuInfo();             //展示现有的学生信息
+    clearStuInfo(head);//删除链表内容
+    loadStuInfoFromFile(head);//将学生信息加载到链表
+    printf("目前链表存在的学生信息\n");
+    printStuInfo(*head);      //查看链表内容
     Pointer p, q;
     p = q = *head;
     char id[20];
     printf("请输入要删除的学生学号：");
     scanf("%s", id);
+    getchar();  // 清空输入缓冲区中的换行符
     while (p != NULL) {
         if (strcmp(p->id, id) == 0)
         {
@@ -295,9 +302,9 @@ void deleteStuInfo(Pointer* head)
                 q->next = p->next;
             }
             free(p);
-            printf("学生信息已成功删除。\n");
             clearStuInfoFile();
             writeStuInfo(*head); // 将更新后的链表信息写入文件
+            printf("学生信息已成功删除。\n");
             return;
         }
         else {
@@ -349,7 +356,32 @@ void addStuInfotopointer(Pointer* head, const char* id, const char* name, const 
     }
 }
 
+//查看链表内容
+void printStuInfo(Pointer head) {
+    Pointer p = head;
+    while (p != NULL) {
+        printf("学号：%s\n", p->id);
+        printf("姓名：%s\n", p->name);
+        printf("性别：%s\n", p->sex);
+        printf("家庭地址：%s\n", p->homeAddress);
+        printf("电话号码：%s\n", p->phone);
+        printf("\n");
+        p = p->next;
+    }
+}
 
+//删除链表信息
+void clearStuInfo(Pointer* head) {
+    Pointer p = *head;
+    while (p != NULL) {
+        Pointer temp = p;
+        p = p->next;
+        free(temp);
+    }
+    *head = NULL; // 将头指针置为空，表示链表已清空
+}
+
+//将学生信息加载到链表
 void loadStuInfoFromFile(Pointer* head)   //将学生信息加载到链表
 {
     FILE* fp;
