@@ -57,7 +57,7 @@ Node* createNode() {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //在链表末尾增加节点 √
-//参数：指向链表的链表，新节点的指针
+//参数：指向链表的指针，新节点的指针
 //返回值：成功返回1，失败返回0 
 int appendNode(Node** head, Node* newNode) {
     if (*head == NULL) {//如果链表为空，则将头指针指向新节点
@@ -76,7 +76,7 @@ int appendNode(Node** head, Node* newNode) {
 }
 
 //在链表中删除指定节点 √
-//参数：指向链表的链表，指定节点的索引
+//参数：指向链表的指针，指定节点的索引
 //返回值：成功返回1，失败返回0 
 int deleteNode(Node** head, int index) {
     if (*head == NULL) {
@@ -108,7 +108,7 @@ int deleteNode(Node** head, int index) {
 }
 
 //在链表中替代指定节点 √
-//参数：指向链表的链表，指定节点的索引，替代原节点的新节点
+//参数：指向链表的指针，指定节点的索引，替代原节点的新节点
 //返回值：成功返回1，失败返回0 
 int updateNode(Node** head, int index, Node* newNode) {
     if (*head == NULL) {
@@ -142,7 +142,7 @@ int updateNode(Node** head, int index, Node* newNode) {
 }
 
 //在链表中查询索引的节点 √
-//参数：链表的头指针，索引
+//参数：指向链表的指针，索引
 //返回值：指向节点的指针
 Node* getNodeAtIndex(Node** head, int index) {
     // 检查链表是否为空  
@@ -168,7 +168,7 @@ Node* getNodeAtIndex(Node** head, int index) {
 }
 
 //在链表中查询匹配项(字符串)节点的索引 √
-//参数：链表的头指针，匹配项(字符串)
+//参数：指向链表的指针，匹配项(字符串)
 //返回值：指定节点的索引 
 int findNodeIndex(Node** head, char* id) {
     // 检查链表是否为空  
@@ -191,8 +191,8 @@ int findNodeIndex(Node** head, char* id) {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //创建指定长度的链表([双向][环型])  √
-//参数：链表的头指针，链表长度 
-//返回值：指定链表的头指针 
+//参数：指向链表的指针，链表长度 
+//返回值：链表的头指针 
 Node* createLinkedList(int len) {
     Node* head = NULL;
     Node* newNode = NULL;
@@ -215,7 +215,7 @@ Node* createLinkedList(int len) {
 }
 
 //遍历打印链表 √ 
-//参数：链表的头指针
+//参数：指向链表的指针
 //返回值：无
 void printLinkedList(Node** head) {
     Node* current = *head;
@@ -228,7 +228,7 @@ void printLinkedList(Node** head) {
 
 //没写完 
 //链表原地排序(根据id排序升序) 
-//参数：链表的头指针
+//参数：指向链表的指针
 //返回值：无
 void sortLinkedList(Node** head) {
     Node* current = *head;
