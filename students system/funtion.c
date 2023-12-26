@@ -216,7 +216,7 @@ StudentInfo* createStuInfoLinkedList(int len) {
     while (i < len) {
         newStuInfoNode = createStuInfoNode();
         /*
-        printf("请输入id:\n");//依次输入节点的数据 
+        printf("请输入id:\n");//依次输入节点的数据
         fgets(tempString, sizeof(newStuInfoNode->id), stdin);
         strcpy(newStuInfoNode->id, strtok(tempString, "\n"));
         */
