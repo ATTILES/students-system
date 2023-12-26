@@ -52,7 +52,7 @@ typedef struct StudentInfomation {
     char homeAddress[100];
     char phone[20];
     struct StudentInfomation* next;
-}StudentInfo;
+}StudentInfo,*Pointer;
 #endif // !__STRUCT_STUDENTINFOMATION__
 
 //创建空节点
