@@ -98,7 +98,7 @@ int writeStuInfo_By_FS(StudentInfo** head);
 //main函数
 int main() {
     Pointer Head = NULL;
-    int select=0;
+    int select = 0;
     while (1) {
         showMenu();
         select = -1;
@@ -106,42 +106,42 @@ int main() {
         getchar();  // 清空输入缓冲区中的换行符
         rewind(stdin);//清空标准输入缓存区
         switch (select) {
-            case 1:
-                addStuInfo(&Head);
-                break;
-            case 2:
-                deleteStuInfo(&Head);
-                break;
-            case 3:
-                updateStuInfo();
-                break;
-            case 4:
-                queryStuInfo();
-                break;
-            case 5:
-                showStuInfo();
-                break;
-            case 6:
-                addStuData();
-                break;
-            case 7:
-                deleteStuData();
-                break;
-            case 8:
-                updateStuData();
-                break;
-            case 9:
-                queryStuData();
-                break;
-            case 10:
-                showStuData();
-                break;
-            case 0: 
-                exitSystem();
-                break;
-            default:
-                printf("功能编号无效！请输入正确的功能编号。\n");
-                break;
+        case 1:
+            addStuInfo(&Head);
+            break;
+        case 2:
+            deleteStuInfo(&Head);
+            break;
+        case 3:
+            updateStuInfo();
+            break;
+        case 4:
+            queryStuInfo();
+            break;
+        case 5:
+            showStuInfo();
+            break;
+        case 6:
+            addStuData();
+            break;
+        case 7:
+            deleteStuData();
+            break;
+        case 8:
+            updateStuData();
+            break;
+        case 9:
+            queryStuData();
+            break;
+        case 10:
+            showStuData();
+            break;
+        case 0:
+            exitSystem();
+            break;
+        default:
+            printf("功能编号无效！请输入正确的功能编号。\n");
+            break;
         }
         printf("请按enter键确认\n");
         getchar();
@@ -200,15 +200,16 @@ void addStuInfo(Pointer* head)      //添加学生信息
                 if (strcmp(p->id, in_number) == 0) {
                     printf("已经有相同的学号：\n");
                     printf("是否重新输入：Y/N\n");
-                    if (FunAskConfirm() == 0) 
+                    if (FunAskConfirm() == 0)
                     {
-                        
-                        return; }
+
+                        return;
+                    }
                     else {
                         flag = 0;
                         break;
                     }
-                    
+
                 }
                 else {
                     q = p;
@@ -407,7 +408,7 @@ void queryStuInfo() {
 //展示学生信息函数
 void showStuInfo()
 {
-  
+
     printf("\n                              学生信息如下\n\n");
     FILE* fp;
     if ((fp = fopen("StudentInfo.csv", "r")) == NULL) {
@@ -456,7 +457,7 @@ void queryStuData() {
     printf("This is funtion about queryStuData()\n");
 }
 
-void showStuData() 
+void showStuData()
 {
     printf("This is funtion about showStuData()\n");
 }
@@ -672,7 +673,7 @@ void clearStuInfoFile()
 }
 
 // 清空结构体缓存
-void clearStuInfo(StudentInfo stu[], int size) 
+void clearStuInfo(StudentInfo stu[], int size)
 {
     memset(stu, 0, sizeof(StudentInfo) * size);
 }
