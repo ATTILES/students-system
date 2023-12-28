@@ -21,11 +21,11 @@
 #ifndef __STRUCT_STUDENTINFOMATION__
 #define __STRUCT_STUDENTINFOMATION__
 typedef struct StudentInfomation {
-    char  id[20];
-    char name[20];
-    char sex[10];
+    char  id[100];
+    char name[100];
+    char sex[100];
     char homeAddress[100];
-    char phone[20];
+    char phone[100];
     struct StudentInfomation* next;
 }StudentInfo, * Pointer;
 #endif // !__STRUCT_STUDENTINFOMATION__
@@ -214,9 +214,10 @@ void printStuInfoLinkedList(StudentInfo** head) {
     printf("\n");
 }
 
-//链表原地排序(根据id排序升序) 
+//链表原地排序(根据id排序升序) 没调试好
 //参数：指向链表的指针
 //返回值：成功返回1，失败返回0。
+/*
 int sortStuInfoLinkedList(StudentInfo** head) {
     StudentInfo* current = *head;
     StudentInfo* previous = NULL;
@@ -230,10 +231,18 @@ int sortStuInfoLinkedList(StudentInfo** head) {
             current = *head;
             previous = NULL;
             for (indexJ = 0; indexJ < count - indexI - 1; indexJ++) {
-                if (strcmp(current->id, current->next->id) > 0) {//关系到4个节点，1->2->3->4。previous指向1，current指向2，3存在且不为空节点，4可能为空节点
-                    previous->next = current->next;//此时1->3->4,2->3->4
-                    current->next = current->next->next;//此时1->3->4,2->4
-                    previous->next->next = current;//此时1->3->2->4，完成节点2和3的交换
+                if (strcmp(current->id, current->next->id) > 0) {//关系到4个节点1->2->3->4。previous指向1，current指向2，3存在且不为空节点，4可能为空节点
+                    if (previous == NULL) {//首个元素就需要交换，此时previous-next不存在，会报错。
+                        *head = current->next;//previous为NULL，current指向1，所以要*head指向2，此时NULL，1->2->3->4，*head==2
+                        current->next = current->next->next;//此时1->3->4，*head==2->3->4
+                        *head->next = current;//此时，head==2->1->3->4
+                    }
+                    else {
+                        previous->next = current->next;//此时1->3->4,2->3->4
+                        current->next = current->next->next;//此时1->3->4,2->4
+                        previous->next->next = current;//此时1->3->2->4，完成节点2和3的交换
+                    }
+                    current = previous->next;//修正current指针的位置，previous指向1，current指向2，由于2、3交换位置，所以previous和current中间隔了一个3被跳过
                 }
                 previous = current;
                 current = current->next;
@@ -246,10 +255,71 @@ int sortStuInfoLinkedList(StudentInfo** head) {
     }
     return 1;
 }
+*/
+
+// 归并排序函数  
+StudentInfo* mergeSort(StudentInfo** head) {
+    if (!*head || !(*head)->next) {
+        return *head;  // 如果链表为空或只有一个节点，直接返回  
+    }
+
+    // 找到链表的中间节点  
+    StudentInfo* slow = *head;
+    StudentInfo* fast = (*head)->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    // 断开链表，使其成为两个子链表  
+    StudentInfo* mid = slow->next;
+    slow->next = NULL;
+
+    // 递归对子链表进行排序  
+    StudentInfo* left = mergeSort(head);
+    StudentInfo* right = mergeSort(&mid);
+
+    // 合并两个已排序的子链表  
+    return merge(&left, &right);
+}
+
+// 合并两个已排序的链表，返回合并后的链表头节点  
+StudentInfo* merge(StudentInfo** left, StudentInfo** right) {
+    StudentInfo* dummy = createStuInfoNode();  // 创建一个虚拟头节点作为新链表的头部  
+    StudentInfo* current = dummy;  // 当前节点设置为虚拟头节点  
+
+    while (*left && *right) {
+        if (strcmp((*left)->id, (*right)->id) <= 0) {
+            current->next = *left;
+            *left = (*left)->next;
+        }
+        else {
+            current->next = *right;
+            *right = (*right)->next;
+        }
+        current = current->next;
+    }
+    // 如果左子链表还有剩余节点，将它们连接到新链表的末尾  
+    if (*left) {
+        current->next = *left;
+    }
+    else {  // 如果右子链表还有剩余节点，将它们连接到新链表的末尾  
+        current->next = *right;
+    }
+    return dummy->next;  // 返回新链表的头部（不包括虚拟头节点）  
+}
+
+
+
 
 //释放链表内存
 void freeStuInfoLinkedList(StudentInfo** head) {
-    ;
+    StudentInfo* current = *head;
+    StudentInfo* previous = NULL;
+    while (current != NULL) {
+        previous = current;
+        current = current->next;
+        free(previous);
+    }
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -265,23 +335,22 @@ StudentInfo* readStuInfo() {
     StudentInfo* head = NULL;
     StudentInfo* newStuInfoNode = (StudentInfo*)calloc(1, sizeof(StudentInfo));
     char* tempString = (char*)calloc(1, sizeof(StudentInfo));
-    if ((fp = fopen("StudentInfomation.csv", "r+")) == NULL) {//文件不存在
-        if ((fp = fopen("StudentInfo.csv", "w+")) == NULL) {
+    if ((fp = fopen("StudentInfomation.csv", "r+")) == NULL) {//文件不存在则创建文件
+        if ((fp = fopen("StudentInfomation.csv", "w+")) == NULL) {
             fclose(fp);
             printf("文件不存在或无法打开文件\n");
-            return NULL;
+            return head;
         }
     }
-    else {//文件存在
-        //若读取字符串不为空，则创建新节点并将字符串格式化输入该节点，再往链表内添加该节点
-        while (fgets(tempString, sizeof(StudentInfo), fp) != NULL) {
-            newStuInfoNode = createStuInfoNode();
-            sscanf(tempString, "%[^,],%[^,],%[^,],%[^,],%s", newStuInfoNode->id, newStuInfoNode->name, newStuInfoNode->sex, newStuInfoNode->homeAddress, newStuInfoNode->phone);
-            appendStuInfoNode(&head, newStuInfoNode);
-        }
-        fclose(fp);
-        return head;
+    //文件存在
+    //若读取字符串不为空，则创建新节点并将字符串格式化输入该节点，再往链表内添加该节点
+    while (fgets(tempString, sizeof(StudentInfo), fp) != NULL) {
+        newStuInfoNode = createStuInfoNode();
+        sscanf(tempString, "%[^,],%[^,],%[^,],%[^,],%s", newStuInfoNode->id, newStuInfoNode->name, newStuInfoNode->sex, newStuInfoNode->homeAddress, newStuInfoNode->phone);
+        appendStuInfoNode(&head, newStuInfoNode);
     }
+    fclose(fp);
+    return head;
 }
 
 //输入指向链表的指针，将学生信息链表的内容以格式化输出文件中
@@ -293,16 +362,16 @@ int writeStuInfo(StudentInfo** head) {
         printf("文件不存在或无法打开文件");
         return 0;
     }
-    else {//文件存在
-        sortStuInfoLinkedList(head);
-        //遍历链表，将链表的内容以格式化输出文件中
-        while (current != NULL) {
-            fprintf(fp, "%s,%s,%s,%s,%s\n", current->id, current->name, current->sex, current->homeAddress, current->phone); // 将学生信息以指定格式写入文件
-            current = current->next;
-        }
-        fclose(fp);
-        return 1;
+    //文件存在
+    //sortStuInfoLinkedList(head);
+    //*head = mergeSort(head);//排序没调试好
+    //遍历链表，将链表的内容以格式化输出文件中
+    while (current != NULL) {
+        fprintf(fp, "%s,%s,%s,%s,%s\n", current->id, current->name, current->sex, current->homeAddress, current->phone); // 将学生信息以指定格式写入文件
+        current = current->next;
     }
+    fclose(fp);
+    return 1;
 }
 
 //添加学生信息函数
@@ -311,7 +380,6 @@ void addStuInfo() {
     StudentInfo* current = head;//位移指针
     StudentInfo* previous = NULL;//位移指针
     StudentInfo* newStuInfoNode = NULL;//新节点
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));//临时字符串
     int index = 0;
     int flag = 0;
 
@@ -319,22 +387,22 @@ void addStuInfo() {
     printf("添加学生信息功能\n");
     while (1) {
         newStuInfoNode = createStuInfoNode();//创建节点
-        printf("请输入学号：");
-        fgets(tempString, sizeof(newStuInfoNode->id), stdin);//从标准输入区stdin读取长度为sizeof(newStuInfoNode->id)的字符串写入tempString
-        strcpy(newStuInfoNode->id, strtok(tempString, "\n"));//将tempString中的字符串以\n分隔，把第一段写入节点中
+        printf("请输入要添加学生的学号：");
+        fgets(newStuInfoNode->id, sizeof(newStuInfoNode->id), stdin);//从标准输入区stdin读取长度为sizeof(newStuInfoNode->id)的字符串写入tempString
+        newStuInfoNode->id[strcspn(newStuInfoNode->id, "\n")] = '\0';  // 删除字符串末尾的回车符  
         printf("请输入姓名：");
-        fgets(tempString, sizeof(newStuInfoNode->name), stdin);
-        strcpy(newStuInfoNode->name, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->name, sizeof(newStuInfoNode->name), stdin);
+        newStuInfoNode->name[strcspn(newStuInfoNode->name, "\n")] = '\0'; 
         printf("请输入性别：");
-        fgets(tempString, sizeof(newStuInfoNode->sex), stdin);
-        strcpy(newStuInfoNode->sex, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->sex, sizeof(newStuInfoNode->sex), stdin);
+        newStuInfoNode->sex[strcspn(newStuInfoNode->sex, "\n")] = '\0';
         printf("请输入家庭地址：");
-        fgets(tempString, sizeof(newStuInfoNode->homeAddress), stdin);
-        strcpy(newStuInfoNode->homeAddress, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->homeAddress, sizeof(newStuInfoNode->homeAddress), stdin);
+        newStuInfoNode->homeAddress[strcspn(newStuInfoNode->homeAddress, "\n")] = '\0';
         printf("请输入联系电话：");
-        fgets(tempString, sizeof(newStuInfoNode->phone), stdin);
-        strcpy(newStuInfoNode->phone, strtok(tempString, "\n"));
-        if (newStuInfoNode->id != NULL) {
+        fgets(newStuInfoNode->phone, sizeof(newStuInfoNode->phone), stdin);
+        newStuInfoNode->phone[strcspn(newStuInfoNode->phone, "\n")] = '\0';
+        if (strlen(newStuInfoNode->id) > 0) {
             index = findStuInfoNodeIndex(&head, newStuInfoNode->id);//根据id查询节点的索引值，不存在返回-1
             if (index == -1) {
                 appendStuInfoNode(&head, newStuInfoNode);//将新节点添加到链表中
@@ -355,13 +423,7 @@ void addStuInfo() {
         }
         printf("是否继续输入学生信息? Y/N\n");
         if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
-            current = head;
-            previous = NULL;
-            while (current != NULL) {
-                previous = current;
-                current = current->next;
-                free(previous);
-            }
+            freeStuInfoLinkedList(&head);//释放链表内存
             return;
         }
     }
@@ -376,14 +438,15 @@ void deleteStuInfo() {
     int tempInt = 0;
     int index = 0;
     int flag = 0;
+    int flag2 = 0;
 
     system("cls");  // Windows系统清屏命令  
     printf("删除学生信息功能\n");
     while (1) {
         printf("请输入要删除的学生学号：");
-        fgets(tempString, sizeof(current->id), stdin);
-        strcpy(tempString, strtok(tempString, "\n"));
-        if (tempString != NULL) {
+        fgets(tempString, sizeof(tempString), stdin);//从标准输入区stdin读取长度为sizeof(newStuInfoNode->id)的字符串写入tempString
+        tempString[strcspn(tempString, "\n")] = '\0';// 删除字符串末尾的回车符  
+        if (strlen(tempString) > 0) {
             index = findStuInfoNodeIndex(&head, tempString);//根据id查询节点的索引值，不存在返回-1
             if (index != -1) {
                 current = head;
@@ -395,11 +458,11 @@ void deleteStuInfo() {
                 printf("%-15s%-15s%-15s%-15s%-15s\n", "学号", "姓名", "性别", "家庭住址", "电话号码");
                 printf("------------------------------------------------------------------------\n");
                 printf("%-15s%-15s%-15s%-15s%-15s\n", current->id, current->name, current->sex, current->homeAddress, current->phone);
-                printf("是否确认删除该学生的信息。\n");
+                printf("是否确认删除该学生的信息。Y/N\n");
                 if (FunAskConfirm() == 1) {
-                    deleteStuInfo(&head, index);//将节点从链表中删除
-                    flag = writeStuInfo(&head);//将链表写入文件
-                    if (flag == 1) {
+                    flag = deleteStuInfoNode(&head, index);//将节点从链表中删除
+                    flag2 = writeStuInfo(&head);//将链表写入文件
+                    if (flag == 1 && flag == 1) {
                         printf("删除学生信息成功。\n");
                     }
                     else {
@@ -419,13 +482,7 @@ void deleteStuInfo() {
         }
         printf("是否继续删除学生信息。Y/N\n");
         if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
-            current = head;
-            previous = NULL;
-            while (current != NULL) {
-                previous = current;
-                current = current->next;
-                free(previous);
-            }
+            freeStuInfoLinkedList(&head);//释放链表内存
             return;
         }
     }
@@ -445,22 +502,22 @@ void updateStuInfo() {
     printf("修改学生信息功能\n");
     while (1) {
         newStuInfoNode = createStuInfoNode();//创建节点
-        printf("请输入要修改或插入的学生学号：");
-        fgets(tempString, sizeof(newStuInfoNode->id), stdin);
-        strcpy(newStuInfoNode->id, strtok(tempString, "\n"));
+        printf("请输入要修改或插入学生的学号：");
+        fgets(newStuInfoNode->id, sizeof(newStuInfoNode->id), stdin);//从标准输入区stdin读取长度为sizeof(newStuInfoNode->id)的字符串写入tempString
+        newStuInfoNode->id[strcspn(newStuInfoNode->id, "\n")] = '\0';// 删除字符串末尾的回车符  
         printf("请输入姓名：");
-        fgets(tempString, sizeof(newStuInfoNode->name), stdin);
-        strcpy(newStuInfoNode->name, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->name, sizeof(newStuInfoNode->name), stdin);
+        newStuInfoNode->name[strcspn(newStuInfoNode->name, "\n")] = '\0'; 
         printf("请输入性别：");
-        fgets(tempString, sizeof(newStuInfoNode->sex), stdin);
-        strcpy(newStuInfoNode->sex, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->sex, sizeof(newStuInfoNode->sex), stdin);
+        newStuInfoNode->sex[strcspn(newStuInfoNode->sex, "\n")] = '\0';
         printf("请输入家庭地址：");
-        fgets(tempString, sizeof(newStuInfoNode->homeAddress), stdin);
-        strcpy(newStuInfoNode->homeAddress, strtok(tempString, "\n"));
+        fgets(newStuInfoNode->homeAddress, sizeof(newStuInfoNode->homeAddress), stdin);
+        newStuInfoNode->homeAddress[strcspn(newStuInfoNode->homeAddress, "\n")] = '\0';
         printf("请输入联系电话：");
-        fgets(tempString, sizeof(newStuInfoNode->phone), stdin);
-        strcpy(newStuInfoNode->phone, strtok(tempString, "\n"));
-        if (newStuInfoNode->id != NULL) {
+        fgets(newStuInfoNode->phone, sizeof(newStuInfoNode->phone), stdin);
+        newStuInfoNode->phone[strcspn(newStuInfoNode->phone, "\n")] = '\0';
+        if (strlen(newStuInfoNode->id) > 0) {
             index = findStuInfoNodeIndex(&head, newStuInfoNode->id);//根据id查询节点的索引值，不存在返回-1
             if (index != -1) {//修改学生信息
                 flag = updateStuInfoNode(&head, index, newStuInfoNode);
@@ -470,24 +527,18 @@ void updateStuInfo() {
             }
             flag = writeStuInfo(&head);//将链表写入文件
             if (flag == 1) {
-                printf("修改学生信息成功。\n");
+                printf("修改或插入学生信息成功。\n");
             }
             else {
-                printf("修改学生信息失败，写入文件失败。\n");
+                printf("修改或插入学生信息失败，写入文件失败。\n");
             }
         }
         else {
-            printf("修改学生信息失败，学号无效。\n");
+            printf("修改或插入学生信息失败，学号无效。\n");
         }
-        printf("是否继续修改学生信息。Y/N\n");
+        printf("是否继续修改或插入学生信息。Y/N\n");
         if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
-            current = head;
-            previous = NULL;
-            while (current != NULL) {
-                previous = current;
-                current = current->next;
-                free(previous);
-            }
+            freeStuInfoLinkedList(&head);//释放链表内存
             return;
         }
     }
@@ -506,9 +557,9 @@ void queryStuInfo() {
     printf("查询学生信息功能\n");
     while (1) {
         printf("请输入要查询的学生学号：");
-        fgets(tempString, sizeof(current->id), stdin);
-        strcpy(tempString, strtok(tempString, "\n"));
-        if (tempString != NULL) {
+        fgets(tempString, sizeof(tempString), stdin);//从标准输入区stdin读取长度为sizeof(newStuInfoNode->id)的字符串写入tempString
+        tempString[strcspn(tempString, "\n")] = '\0';// 删除字符串末尾的回车符  
+        if (strlen(tempString) > 0) {
             index = findStuInfoNodeIndex(&head, tempString);//根据id查询节点的索引值，不存在返回-1
             if (index != -1) {
                 current = head;
@@ -530,13 +581,7 @@ void queryStuInfo() {
         }
         printf("是否继续查询学生信息。Y/N\n");
         if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
-            current = head;
-            previous = NULL;
-            while (current != NULL) {
-                previous = current;
-                current = current->next;
-                free(previous);
-            }
+            freeStuInfoLinkedList(&head);//释放链表内存
             return;
         }
     }
@@ -562,15 +607,10 @@ void showStuInfo() {
         current = current->next;
     }
     printf("是否退出浏览学生信息。Y/N\n");
-    while (FunAskConfirm() != 1) {}//不继续，则释放内存并退出函数
-    current = head;
-    previous = NULL;
-    while (current != NULL) {
-        previous = current;
-        current = current->next;
-        free(previous);
+    if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
+        freeStuInfoLinkedList(&head);//释放链表内存
+        return;
     }
-    return;
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

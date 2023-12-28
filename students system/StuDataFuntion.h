@@ -9,7 +9,7 @@
     #ifndef __STRUCT_STUDENTDATA__
         #define __STRUCT_STUDENTDATA__
         typedef struct StudentData {
-            char id[20];
+            char id[100];
             float scoreChinese;
             float scoreMath;
             float scoreEnglish;
