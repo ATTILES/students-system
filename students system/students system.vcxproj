@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Users\ASUS\Desktop\在校课程文件\福建师范大学协和学院_电子信息工程\C语言1203\期末大作业\学生综合测评系统\students-system\students system;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,11 +128,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="funtion.c" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="OtherFuntion.c" />
+    <ClCompile Include="StuDataFuntion.c" />
+    <ClCompile Include="StuInfoFuntion.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="funtion.h" />
+    <ClInclude Include="OtherFuntion.h" />
+    <ClInclude Include="StuDataFuntion.h" />
+    <ClInclude Include="StuInfoFuntion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,16 +15,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="funtion.c">
+    <ClCompile Include="OtherFuntion.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StuDataFuntion.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StuInfoFuntion.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="funtion.h">
-      <Filter>源文件</Filter>
+    <ClInclude Include="OtherFuntion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StuDataFuntion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StuInfoFuntion.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
