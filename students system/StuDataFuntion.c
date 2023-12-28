@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "OtherFuntion.h"
+#include "StuDataFuntion.h"
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -21,7 +22,7 @@
 #ifndef __STRUCT_STUDENTDATA__
 #define __STRUCT_STUDENTDATA__
 typedef struct StudentData {
-    char id[20];
+    char id[100];
     float scoreChinese;
     float scoreMath;
     float scoreEnglish;
@@ -222,44 +223,25 @@ void printStuDataLinkedList(StudentData** head) {
         current = current->next;
     }
     printf("\n");
+    system("pause");
 }
 
-//链表原地排序(根据id排序升序) 
+//链表原地排序(根据id排序升序) 没调试好，进度见StuInfoFuntion文件
 //参数：指向链表的指针
 //返回值：成功返回1，失败返回0。
 int sortStuDataLinkedList(StudentData** head) {
-    StudentData* current = *head;
-    StudentData* previous = NULL;
-    int indexI = 0, indexJ = 0, count = 0;
-
-    for (count = 0; current != NULL; count++) {//遍历链表，计算节点数量
-        current = current->next;
-    }
-    if (count > 0) {
-        for (indexI = 0; indexI < count - 1; indexI++) {
-            current = *head;
-            previous = NULL;
-            for (indexJ = 0; indexJ < count - indexI - 1; indexJ++) {
-                if (strcmp(current->id, current->next->id) > 0) {//关系到4个节点，1->2->3->4。previous指向1，current指向2，3存在且不为空节点，4可能为空节点
-                    previous->next = current->next;//此时1->3->4,2->3->4
-                    current->next = current->next->next;//此时1->3->4,2->4
-                    previous->next->next = current;//此时1->3->2->4，完成节点2和3的交换
-                }
-                previous = current;
-                current = current->next;
-            }
-        }
-    }
-    else {
-        printf("排序失败，链表为空。");
-        return 0;
-    }
     return 1;
 }
 
 //释放链表内存
 void freeStuDataLinkedList(StudentData** head) {
-    ;
+    StudentData* current = *head;
+    StudentData* previous = NULL;
+    while (current != NULL) {
+        previous = current;
+        current = current->next;
+        free(previous);
+    }
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -269,16 +251,44 @@ void freeStuDataLinkedList(StudentData** head) {
 //学生数据功能函数
 //注：刻意避开了在函数内输入节点的内部数据，仅以一个id作为唯一标识
 
+//从文件中读取学生数据到链表中，返回链表的头指针
 StudentData* readStuData() {
-    ;
+    FILE* fp = NULL;
+    StudentData* head = NULL;
+    char tempString[158]; // 临时字符串，假设每行数据不超过158个字符
+
+    if ((fp = fopen("StudentDataInfomation.csv", "r+")) == NULL) {
+        if ((fp = fopen("StudentDataInfomation.csv", "w+")) == NULL) {
+            fclose(fp);
+            printf("文件不存在或无法打开文件\n");
+            return head;
+        }
+    }
+
+    while (fgets(tempString, sizeof(tempString), fp) != NULL) {
+        StudentData* newStudentData = createStuDataNode();
+        sscanf(tempString, "%[^,],%f,%f,%f,%f,%d,%f,%f,%f,%f,%d",
+            newStudentData->id, &newStudentData->scoreChinese, &newStudentData->scoreMath,
+            &newStudentData->scoreEnglish, &newStudentData->scoreAverage, &newStudentData->scoreRanking,
+            &newStudentData->evaluationClassmate, &newStudentData->scoreMoral, &newStudentData->evaluationTeacher,
+            &newStudentData->totalScore, &newStudentData->totalRanking);
+
+        appendStuDataNode(&head, newStudentData);
+    }
+
+    fclose(fp);
+    return head;
 }
+
 
 void writeStuData(StudentData** head) {
     ;
 }
 
 void addStuData() {
-    printf("This is funtion about addStuData\n");
+    StudentData* head = readStuData();
+    printStuDataLinkedList(&head);
+
 }
 
 void deleteStuData() {

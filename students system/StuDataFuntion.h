@@ -9,7 +9,7 @@
     #ifndef __STRUCT_STUDENTDATA__
         #define __STRUCT_STUDENTDATA__
         typedef struct StudentData {
-            char id[20];
+            char id[100];
             float scoreChinese;
             float scoreMath;
             float scoreEnglish;
@@ -40,6 +40,6 @@
     void updateStuData();//修改或插入学生数据功能
     void queryStuData();//查询学生数据功能
     void showStuData();//浏览学生数据功能
-    StudentInfo* readStuInfo();//从文件中读取学生数据到链表中，返回链表的头指针
-    int writeStuInfo(StudentInfo** head);//输入指向链表的指针，将学生数据链表的内容以格式化输出文件中
+    StudentData* readStuData();//从文件中读取学生数据到链表中，返回链表的头指针
+    void writeStuData(StudentData** head);//输入指向链表的指针，将学生数据链表的内容以格式化输出文件中
 #endif // !__STUDATAFUNTION_H__
