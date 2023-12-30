@@ -27,9 +27,7 @@
     int findStuInfoNodeIndex(StudentInfo** head, char* id);//在链表中查询匹配项(字符串)节点的索引
     StudentInfo* createStuInfoLinkedList(int len);//创建指定长度的链表([双向][环型])
     void printStuInfoLinkedList(StudentInfo** head);//遍历打印链表
-    //int sortStuInfoLinkedList(StudentInfo** head);//链表原地排序(根据id排序升序) 
-    StudentInfo* mergeSort(StudentInfo** head);// 归并排序函数  
-    StudentInfo* merge(StudentInfo** left, StudentInfo** right);// 合并两个已排序的链表，返回合并后的链表头节点 
+    int sortStuInfoLinkedList(StudentInfo** head);//链表原地排序(根据id排序升序) 
     void freeStuInfoLinkedList(StudentInfo** head);//释放链表内存
     void addStuInfo();//增加学生信息功能
     void deleteStuInfo();//删除学生信息功能
