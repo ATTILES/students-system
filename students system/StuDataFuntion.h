@@ -41,5 +41,6 @@
     void queryStuData();//查询学生数据功能
     void showStuData();//浏览学生数据功能
     StudentData* readStuData();//从文件中读取学生数据到链表中，返回链表的头指针
-    void writeStuData(StudentData** head);//输入指向链表的指针，将学生数据链表的内容以格式化输出文件中
+    int writeStuData(StudentData** head);//输入指向链表的指针，将学生数据链表的内容以格式化输出文件中
+    void formatFloat(float num, char* result);//将浮点型数据转为保留2位小数的字符串
 #endif // !__STUDATAFUNTION_H__

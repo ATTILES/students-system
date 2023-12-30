@@ -244,6 +244,12 @@ void freeStuDataLinkedList(StudentData** head) {
     }
 }
 
+//将浮点型数据转为保留2位小数的字符串
+void formatFloat(float num, char* result) {
+    sprintf(result, "%.2f", num); // 使用sprintf函数将浮点数格式化为字符串，保留2位小数
+}
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -281,13 +287,52 @@ StudentData* readStuData() {
 }
 
 
-void writeStuData(StudentData** head) {
-    ;
+int writeStuData(StudentData** head) {
+    FILE* fp = NULL;
+    StudentData* current = *head;
+    if ((fp = fopen("StudentDataInfomation.csv", "r+")) == NULL) {//文件不存在
+        fclose(fp);
+        printf("文件不存在或无法打开文件");
+        return 0;
+    }
+    //文件存在
+    //sortStuInfoLinkedList(head);
+    //*head = mergeSort(head);//排序没调试好
+    //遍历链表，将链表的内容以格式化输出文件中
+    while (current != NULL) {
+        char scoreChinese[10], scoreMath[10], scoreEnglish[10], scoreAverage[10], scoreRanking[10];
+        char evaluationClassmate[10], scoreMoral[10], evaluationTeacher[10], totalScore[10], totalRanking[10];
+
+        formatFloat(current->scoreChinese, scoreChinese);
+        formatFloat(current->scoreMath, scoreMath);
+        formatFloat(current->scoreEnglish, scoreEnglish);
+        formatFloat(current->scoreAverage, scoreAverage);
+        formatFloat(current->scoreRanking, scoreRanking);
+        formatFloat(current->evaluationClassmate, evaluationClassmate);
+        formatFloat(current->scoreMoral, scoreMoral);
+        formatFloat(current->evaluationTeacher, evaluationTeacher);
+        formatFloat(current->totalScore, totalScore);
+        formatFloat(current->totalRanking, totalRanking);
+        fprintf(fp, "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", current->id, scoreChinese, scoreMath,\
+                scoreEnglish, scoreAverage, scoreRanking, evaluationClassmate,\
+                scoreMoral,evaluationTeacher, totalScore, totalRanking);
+
+        current = current->next;
+    }
+    
+    fclose(fp);
+    return 1;
 }
 
 void addStuData() {
     StudentData* head = readStuData();
+    if (writeStuData(&head) == 1)
+    {
+        printf("写入成功");
+    }
     printStuDataLinkedList(&head);
+
+
 
 }
 
