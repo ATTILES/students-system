@@ -215,17 +215,16 @@ void printStuInfoLinkedList(StudentInfo** head) {
     printf("\n");
 }
 
-//链表原地排序(根据id排序升序) 没调试好
+//链表原地排序(根据id排序升序)
 //参数：指向链表的指针
 //返回值：成功返回1，失败返回0。
-/*
 int sortStuInfoLinkedList(StudentInfo** head) {
     StudentInfo* current = *head;
     StudentInfo* previous = NULL;
     int indexI = 0, indexJ = 0, count = 0;
 
-    for (count = 0; current != NULL; count++) {//遍历链表，计算节点数量
-        current = current->next;
+    for (count = 0, current = *head; current != NULL; current = current->next) {//遍历链表，计算节点数量
+        count++;
     }
     if (count > 0) {
         for (indexI = 0; indexI < count - 1; indexI++) {
@@ -233,17 +232,18 @@ int sortStuInfoLinkedList(StudentInfo** head) {
             previous = NULL;
             for (indexJ = 0; indexJ < count - indexI - 1; indexJ++) {
                 if (strcmp(current->id, current->next->id) > 0) {//关系到4个节点1->2->3->4。previous指向1，current指向2，3存在且不为空节点，4可能为空节点
-                    if (previous == NULL) {//首个元素就需要交换，此时previous-next不存在，会报错。
+                    if (previous == NULL) {//首个元素就需要交换，此时previous->next不存在，使用previous->会报错。
                         *head = current->next;//previous为NULL，current指向1，所以要*head指向2，此时NULL，1->2->3->4，*head==2
                         current->next = current->next->next;//此时1->3->4，*head==2->3->4
-                        *head->next = current;//此时，head==2->1->3->4
+                        (*head)->next = current;//此时，head==2->1->3->4
+                        current = *head;//修正current指针的位置，previous指向NULL，current指向1，由于1、2交换位置，所以previous和current中间隔了一个2被跳过
                     }
                     else {
                         previous->next = current->next;//此时1->3->4,2->3->4
                         current->next = current->next->next;//此时1->3->4,2->4
                         previous->next->next = current;//此时1->3->2->4，完成节点2和3的交换
+                        current = previous->next;//修正current指针的位置，previous指向1，current指向2，由于2、3交换位置，所以previous和current中间隔了一个3被跳过
                     }
-                    current = previous->next;//修正current指针的位置，previous指向1，current指向2，由于2、3交换位置，所以previous和current中间隔了一个3被跳过
                 }
                 previous = current;
                 current = current->next;
@@ -256,61 +256,6 @@ int sortStuInfoLinkedList(StudentInfo** head) {
     }
     return 1;
 }
-*/
-
-// 归并排序函数  
-StudentInfo* mergeSort(StudentInfo** head) {
-    if (!*head || !(*head)->next) {
-        return *head;  // 如果链表为空或只有一个节点，直接返回  
-    }
-
-    // 找到链表的中间节点  
-    StudentInfo* slow = *head;
-    StudentInfo* fast = (*head)->next;
-    while (fast && fast->next) {
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-    // 断开链表，使其成为两个子链表  
-    StudentInfo* mid = slow->next;
-    slow->next = NULL;
-
-    // 递归对子链表进行排序  
-    StudentInfo* left = mergeSort(head);
-    StudentInfo* right = mergeSort(&mid);
-
-    // 合并两个已排序的子链表  
-    return merge(&left, &right);
-}
-
-// 合并两个已排序的链表，返回合并后的链表头节点  
-StudentInfo* merge(StudentInfo** left, StudentInfo** right) {
-    StudentInfo* dummy = createStuInfoNode();  // 创建一个虚拟头节点作为新链表的头部  
-    StudentInfo* current = dummy;  // 当前节点设置为虚拟头节点  
-
-    while (*left && *right) {
-        if (strcmp((*left)->id, (*right)->id) <= 0) {
-            current->next = *left;
-            *left = (*left)->next;
-        }
-        else {
-            current->next = *right;
-            *right = (*right)->next;
-        }
-        current = current->next;
-    }
-    // 如果左子链表还有剩余节点，将它们连接到新链表的末尾  
-    if (*left) {
-        current->next = *left;
-    }
-    else {  // 如果右子链表还有剩余节点，将它们连接到新链表的末尾  
-        current->next = *right;
-    }
-    return dummy->next;  // 返回新链表的头部（不包括虚拟头节点）  
-}
-
-
-
 
 //释放链表内存
 void freeStuInfoLinkedList(StudentInfo** head) {
@@ -326,9 +271,6 @@ void freeStuInfoLinkedList(StudentInfo** head) {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-//学生信息功能函数
-//注：刻意避开了在函数内输入节点的内部数据，仅以一个id作为唯一标识
 
 //从文件中读取学生信息到链表中，返回链表的头指针
 StudentInfo* readStuInfo() {
@@ -364,8 +306,7 @@ int writeStuInfo(StudentInfo** head) {
         return 0;
     }
     //文件存在
-    //sortStuInfoLinkedList(head);
-    //*head = mergeSort(head);//排序没调试好
+    sortStuInfoLinkedList(head);//根据学号升序对链表排序
     //遍历链表，将链表的内容以格式化输出文件中
     while (current != NULL) {
         fprintf(fp, "%s,%s,%s,%s,%s\n", current->id, current->name, current->sex, current->homeAddress, current->phone); // 将学生信息以指定格式写入文件
@@ -463,7 +404,7 @@ void deleteStuInfo() {
                 if (FunAskConfirm() == 1) {
                     flag = deleteStuInfoNode(&head, index);//将节点从链表中删除
                     flag2 = writeStuInfo(&head);//将链表写入文件
-                    if (flag == 1 && flag == 1) {
+                    if (flag == 1 && flag2 == 1) {
                         printf("删除学生信息成功。\n");
                     }
                     else {

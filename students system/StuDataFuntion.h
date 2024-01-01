@@ -14,12 +14,12 @@
             float scoreMath;
             float scoreEnglish;
             float scoreAverage;
-            int scoreRanking;
+            float scoreRanking;
             float evaluationClassmate;
             float scoreMoral;
             float evaluationTeacher;
             float totalScore;
-            int totalRanking;
+            float totalRanking;
             struct StudentData* next;
         }StudentData;
     #endif // !__STRUCT_STUDENTDATA__
