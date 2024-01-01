@@ -10,7 +10,7 @@ Github地址：https://github.com/ATTILES/students-system.git
 /*
 注：
 1.变量命名：小驼峰命名法（首单词开头小写，其余单词开头大写）
-2.数据文件保存格式均采用csv格式
+2.文件保存格式均采用csv格式
 */
 
 //宏定义
@@ -73,6 +73,7 @@ int main() {
             break;
         }
         printf("请按enter键确认\n");
+        //getchar();
         rewind(stdin);//清空标准输入缓存区
     }
     return 0;
