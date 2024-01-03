@@ -310,6 +310,7 @@ int writeStuInfo(StudentInfo** head) {
     //文件存在
     sortStuInfoLinkedList(head);//根据学号升序对链表排序
     //遍历链表，将链表的内容以格式化输出文件中
+    current = *head;
     while (current != NULL) {
         fprintf(fp, "%s,%s,%s,%s,%s\n", current->id, current->name, current->sex, current->homeAddress, current->phone); // 将学生信息以指定格式写入文件
         current = current->next;
@@ -552,7 +553,7 @@ void showStuInfo() {
             printf("%-15s%-15s%-15s%-15s%-15s\n\n", current->id, current->name, current->sex, current->homeAddress, current->phone);
             current = current->next;
         }
-        printf("是否退出浏览学生信息。Y/N\n");
+        printf("是否继续浏览学生信息。Y/N\n");
         if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
             freeStuInfoLinkedList(&head);//释放链表内存
             return;
