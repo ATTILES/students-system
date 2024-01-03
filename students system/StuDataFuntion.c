@@ -293,7 +293,10 @@ void formatFloat(float num, char* result) {
 StudentData* readStuData() {
     FILE* fp = NULL;
     StudentData* head = NULL;
-    char tempString[158]; // 临时字符串，假设每行数据不超过158个字符
+    StudentData* newStudentData = NULL;
+    StudentData* current = head;
+    StudentData* currentExternal = head;
+    char tempString[200]; // 临时字符串，假设每行数据不超过200个字符
 
     if ((fp = fopen("StudentData.csv", "r+")) == NULL) {
         if ((fp = fopen("StudentData.csv", "w+")) == NULL) {
@@ -304,7 +307,7 @@ StudentData* readStuData() {
     }
 
     while (fgets(tempString, sizeof(tempString), fp) != NULL) {
-        StudentData* newStudentData = createStuDataNode();
+        newStudentData = createStuDataNode();
         sscanf(tempString, "%[^,],%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
             newStudentData->id, &newStudentData->scoreChinese, &newStudentData->scoreMath,
             &newStudentData->scoreEnglish, &newStudentData->scoreAverage, &newStudentData->scoreRanking,
@@ -312,6 +315,25 @@ StudentData* readStuData() {
             &newStudentData->totalScore, &newStudentData->totalRanking);
 
         appendStuDataNode(&head, newStudentData);
+    }
+
+    //重新计算考试成绩和综合测评总分
+    for (current = head; current != NULL; current = current->next) {
+        current->scoreAverage = (current->scoreChinese + current->scoreMath + current->scoreEnglish) / 3;
+        current->totalScore = current->scoreAverage * 0.6 + current->evaluationClassmate * 0.1 + current->scoreMoral * 0.1 + current->evaluationTeacher * 0.2;
+    }
+    //重新计算排名
+    for (currentExternal = head; currentExternal != NULL; currentExternal = currentExternal->next) {
+        currentExternal->scoreRanking = 1;
+        currentExternal->totalRanking = 1;
+        for (current = head; current != NULL; current = current->next) {
+            if (current->scoreAverage > currentExternal->scoreAverage) {
+                currentExternal->scoreRanking++;
+            }
+            if (current->totalScore > currentExternal->totalScore) {
+                currentExternal->totalRanking++;
+            }
+        }
     }
 
     fclose(fp);
@@ -451,7 +473,7 @@ void deleteStuData() {
     StudentData* head = readStuData();//从文件中读取已有内容并转为链表
     StudentData* current = head;//位移指针
     StudentData* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentData));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
     int flag = 0;
@@ -515,7 +537,7 @@ void updateStuData() {
     StudentData* current = head;//位移指针
     StudentData* previous = NULL;//位移指针
     StudentData* newStuDataNode = NULL;//新节点
-    char* tempString = (char*)calloc(1, sizeof(StudentData));//临时字符串
+    char tempString[100];//临时字符串
     int index = 0;
     int flag = 0;
 
@@ -582,7 +604,7 @@ void queryStuData() {
     StudentData* head = readStuData();//从文件中读取已有内容并转为链表
     StudentData* current = head;//位移指针
     StudentData* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentData));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
 
@@ -630,7 +652,7 @@ void showStuData()
     StudentData* head = readStuData();//从文件中读取已有内容并转为链表
     StudentData* current = head;//位移指针
     StudentData* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentData));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
 

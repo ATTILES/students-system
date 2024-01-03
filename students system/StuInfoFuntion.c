@@ -258,6 +258,8 @@ int sortStuInfoLinkedList(StudentInfo** head) {
 }
 
 //释放链表内存
+//参数：指向链表的指针
+//返回值：无
 void freeStuInfoLinkedList(StudentInfo** head) {
     StudentInfo* current = *head;
     StudentInfo* previous = NULL;
@@ -277,7 +279,7 @@ StudentInfo* readStuInfo() {
     FILE* fp = NULL;
     StudentInfo* head = NULL;
     StudentInfo* newStuInfoNode = (StudentInfo*)calloc(1, sizeof(StudentInfo));
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));
+    char tempString[200];// 临时字符串，假设每行数据不超过200个字符
     if ((fp = fopen("StudentInfomation.csv", "r+")) == NULL) {//文件不存在则创建文件
         if ((fp = fopen("StudentInfomation.csv", "w+")) == NULL) {
             fclose(fp);
@@ -376,7 +378,7 @@ void deleteStuInfo() {
     StudentInfo* head = readStuInfo();//从文件中读取已有内容并转为链表
     StudentInfo* current = head;//位移指针
     StudentInfo* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
     int flag = 0;
@@ -436,7 +438,7 @@ void updateStuInfo() {
     StudentInfo* current = head;//位移指针
     StudentInfo* previous = NULL;//位移指针
     StudentInfo* newStuInfoNode = NULL;//新节点
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));//临时字符串
+    char tempString[100];//临时字符串
     int index = 0;
     int flag = 0;
 
@@ -491,7 +493,7 @@ void queryStuInfo() {
     StudentInfo* head = readStuInfo();//从文件中读取已有内容并转为链表
     StudentInfo* current = head;//位移指针
     StudentInfo* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
 
@@ -534,25 +536,27 @@ void showStuInfo() {
     StudentInfo* head = readStuInfo();//从文件中读取已有内容并转为链表
     StudentInfo* current = head;//位移指针
     StudentInfo* previous = NULL;//位移指针
-    char* tempString = (char*)calloc(1, sizeof(StudentInfo));//临时字符串
+    char tempString[100];//临时字符串
     int tempInt = 0;
     int index = 0;
 
-    system("cls");  // Windows系统清屏命令  
-    printf("浏览学生信息功能\n");
-    printf("\n                              学生信息如下\n\n");
-    printf("%-15s%-15s%-15s%-15s%-15s\n", "学号", "姓名", "性别", "家庭住址", "电话号码");
-    printf("------------------------------------------------------------------------\n");
-    current = head;
-  
-    while (current != NULL) {//遍历输出
-        printf("%-15s%-15s%-15s%-15s%-15s\n\n", current->id, current->name, current->sex, current->homeAddress, current->phone);
-        current = current->next;
-    }
-    printf("是否退出浏览学生信息。Y/N\n");
-    if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
-        freeStuInfoLinkedList(&head);//释放链表内存
-        return;
+    while(1){
+        system("cls");  // Windows系统清屏命令  
+        printf("浏览学生信息功能\n");
+        printf("\n                              学生信息如下\n\n");
+        printf("%-15s%-15s%-15s%-15s%-15s\n", "学号", "姓名", "性别", "家庭住址", "电话号码");
+        printf("------------------------------------------------------------------------\n");
+        current = head;
+
+        while (current != NULL) {//遍历输出
+            printf("%-15s%-15s%-15s%-15s%-15s\n\n", current->id, current->name, current->sex, current->homeAddress, current->phone);
+            current = current->next;
+        }
+        printf("是否退出浏览学生信息。Y/N\n");
+        if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
+            freeStuInfoLinkedList(&head);//释放链表内存
+            return;
+        }
     }
 }
 

@@ -29,12 +29,12 @@
     void printStuInfoLinkedList(StudentInfo** head);//遍历打印链表
     int sortStuInfoLinkedList(StudentInfo** head);//链表原地排序(根据id排序升序) 
     void freeStuInfoLinkedList(StudentInfo** head);//释放链表内存
+    StudentInfo* readStuInfo();//从文件中读取学生信息到链表中，返回链表的头指针
+    int writeStuInfo(StudentInfo** head);//输入指向链表的指针，将学生信息链表的内容以格式化输出文件中
     void addStuInfo();//增加学生信息功能
     void deleteStuInfo();//删除学生信息功能
     void updateStuInfo();//修改或插入学生信息功能
     void queryStuInfo();//查询学生信息功能
     void showStuInfo();//浏览学生信息功能
-    StudentInfo* readStuInfo();//从文件中读取学生信息到链表中，返回链表的头指针
-    int writeStuInfo(StudentInfo** head);//输入指向链表的指针，将学生信息链表的内容以格式化输出文件中
 #endif // !__STUINFOFUNTION_H__
 
