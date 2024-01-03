@@ -669,7 +669,7 @@ void showStuData()
             current->evaluationClassmate, current->scoreMoral, current->evaluationTeacher, current->totalScore, current->totalRanking);
         current = current->next;
     }
-    printf("是否退出浏览学生信息。Y/N\n");
+    printf("是否继续浏览学生信息。Y/N\n");
     if (FunAskConfirm() == 0) {//不继续，则释放内存并退出函数
         freeStuDataLinkedList(&head);//释放链表内存
         return;
